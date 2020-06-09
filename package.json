@@ -1,0 +1,32 @@
+{
+  "name": "export-generator",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "bin": {
+    "generate-export": "bin/run.js"
+  }
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/alexxyzeng/export-generator.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/alexxyzeng/export-generator/issues"
+  },
+  "homepage": "https://github.com/alexxyzeng/export-generator#readme",
+  "devDependencies": {
+    "@types/eslint": "^6.8.1",
+    "eslint": "^7.2.0"
+  },
+  "dependencies": {
+    "@babel/plugin-proposal-class-properties": "^7.10.1",
+    "@babel/plugin-proposal-optional-chaining": "^7.10.1",
+    "@babel/plugin-transform-react-jsx": "^7.10.1"
+  }
+}
