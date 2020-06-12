@@ -8,7 +8,7 @@
   },
   "bin": {
     "generate-export": "bin/run.js"
-  }
+  },
   "repository": {
     "type": "git",
     "url": "git+https://github.com/alexxyzeng/export-generator.git"
@@ -25,6 +25,7 @@
     "eslint": "^7.2.0"
   },
   "dependencies": {
+    "@babel/core": "^7.10.2",
     "@babel/plugin-proposal-class-properties": "^7.10.1",
     "@babel/plugin-proposal-optional-chaining": "^7.10.1",
     "@babel/plugin-transform-react-jsx": "^7.10.1"
