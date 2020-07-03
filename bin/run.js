@@ -1,18 +1,22 @@
 #!/usr/bin/env node
 const fs = require('fs')
+const process = require('process')
 const path = require('path')
 const babel = require('@babel/core')
 const parseExport = require('../parseExport')
 let importStatements = []
 let exportStatements = []
 
-function readFiles(dirName, outputPath) {
+const [outputName = 'index.js'] = process.argv.slice(2);
+
+function parseFiles(basePath, dirName, outputPath) {
   const paths = fs.readdirSync(dirName)
+
   paths.forEach(p => {
     const targetPath = dirName + `/${p}`
     const stat = fs.statSync(path.resolve(targetPath))
     if (stat.isDirectory()) {
-      readFiles(targetPath)
+      parseFiles(basePath, targetPath)
     } else if (stat.isFile()) {
       if (p === outputPath) {
         return
@@ -28,7 +32,7 @@ function readFiles(dirName, outputPath) {
             '@babel/plugin-proposal-optional-chaining'
           ]
         })
-        const finalPath = targetPath.replace(__dirname, '.')
+        const finalPath = targetPath.replace(basePath, '.')
         if (finalPath !== '.') {
           generateDefaultExport(finalPath, importStatements, exportStatements)
           generateNamedExport(finalPath, importStatements, exportStatements)
@@ -41,11 +45,10 @@ function readFiles(dirName, outputPath) {
 
   const imports = importStatements.join('\n')
   const exports = generateExports(exportStatements)
-  fs.writeFileSync(`./${outputPath}`, imports + '\n' + exports)
+  fs.writeFileSync(`${dirName}/${outputPath}`, imports + '\n\n' + exports)
 }
 
-readFiles(__dirname, 'a.js')
-// console.log(__dirname)
+parseFiles(process.cwd(), process.cwd(), outputName)
 
 // 写入文件
 
