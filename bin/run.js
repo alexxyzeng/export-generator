@@ -10,6 +10,7 @@ let exportStatements = []
 const [dirPath = process.cwd(), outputName = 'index.js'] = process.argv.slice(2);
 
 function parseFiles(basePath, dirName, outputPath) {
+  console.log('params -----', basePath, '\n', dirName, '\n', outputPath)
   const paths = fs.readdirSync(dirName)
 
   paths.forEach(p => {
@@ -45,7 +46,7 @@ function parseFiles(basePath, dirName, outputPath) {
 
   const imports = importStatements.join('\n')
   const exports = generateExports(exportStatements)
-  fs.writeFileSync(`${dirName}/${outputPath}`, imports + '\n\n' + exports)
+  fs.writeFileSync(path.resolve(basePath, outputName), imports + '\n\n' + exports)
 }
 
 parseFiles(dirPath, dirPath, outputName)
