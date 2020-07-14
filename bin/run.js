@@ -7,7 +7,7 @@ const parseExport = require('../parseExport')
 let importStatements = []
 let exportStatements = []
 
-const [outputName = 'index.js'] = process.argv.slice(2);
+const [dirPath = process.cwd(), outputName = 'index.js'] = process.argv.slice(2);
 
 function parseFiles(basePath, dirName, outputPath) {
   const paths = fs.readdirSync(dirName)
@@ -48,7 +48,7 @@ function parseFiles(basePath, dirName, outputPath) {
   fs.writeFileSync(`${dirName}/${outputPath}`, imports + '\n\n' + exports)
 }
 
-parseFiles(process.cwd(), process.cwd(), outputName)
+parseFiles(dirPath, dirPath, outputName)
 
 // 写入文件
 
