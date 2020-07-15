@@ -10,7 +10,6 @@ let exportStatements = []
 
 const [dirPath, outputName = 'index.js'] = process.argv.slice(2)
 if (!dirPath) {
-  console.log(process.cwd())
   throw new Error(chalk.red('No directory path specified'))
 }
 
@@ -73,6 +72,7 @@ function generateNamedExport(finalPath, importStatements, exportStatements) {
   if (!Array.isArray(global.namedExport) || global.namedExport.length === 0) {
     return
   }
+  // console.log(global.namedExport, '---- named export')
   const names = global.namedExport.join(',\n  ')
   importStatements.push(`import {\n  ${names} \n} from '${finalPath}'`)
   global.namedExport.forEach(name => {
