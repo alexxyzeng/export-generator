@@ -3,19 +3,23 @@ const fs = require('fs')
 const process = require('process')
 const path = require('path')
 const babel = require('@babel/core')
+const chalk = require('chalk')
 const parseExport = require('../parseExport')
 let importStatements = []
 let exportStatements = []
 
-const [dirPath = process.cwd(), outputName = 'index.js'] = process.argv.slice(2);
+const [dirPath, outputName = 'index.js'] = process.argv.slice(2)
+if (!dirPath) {
+  console.log(process.cwd())
+  throw new Error(chalk.red('No directory path specified'))
+}
 
 function parseFiles(basePath, dirName, outputPath) {
-  console.log('params -----', basePath, '\n', dirName, '\n', outputPath)
   const paths = fs.readdirSync(dirName)
 
   paths.forEach(p => {
-    const targetPath = dirName + `/${p}`
-    const stat = fs.statSync(path.resolve(targetPath))
+    const targetPath = path.resolve(dirName, p)
+    const stat = fs.statSync(targetPath)
     if (stat.isDirectory()) {
       parseFiles(basePath, targetPath)
     } else if (stat.isFile()) {

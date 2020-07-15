@@ -21,6 +21,7 @@
   },
   "homepage": "https://github.com/alexxyzeng/export-generator#readme",
   "devDependencies": {
+    "@types/chalk": "^2.2.0",
     "@types/eslint": "^6.8.1",
     "eslint": "^7.2.0"
   },
@@ -28,6 +29,7 @@
     "@babel/core": "^7.10.2",
     "@babel/plugin-proposal-class-properties": "^7.10.1",
     "@babel/plugin-proposal-optional-chaining": "^7.10.1",
-    "@babel/plugin-transform-react-jsx": "^7.10.1"
+    "@babel/plugin-transform-react-jsx": "^7.10.1",
+    "chalk": "^4.1.0"
   }
 }
