@@ -59,6 +59,9 @@ parseFiles(dirPath, dirPath, outputName)
 
 function generateDefaultExport(finalPath, importStatements, exportStatements) {
   const paths = finalPath.split('/')
+  if (global.defaultExport === null) {
+    return
+  }
   const exportName = global.defaultExport || paths[paths.length - 2]
   if (exportName !== '.') {
     importStatements.push(`import ${exportName} from '${finalPath}'`)
