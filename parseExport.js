@@ -5,7 +5,6 @@ module.exports = function () {
         const { node } = path
         const { declaration } = node
         const { name, id } = declaration
-
         if (!ableToExport(node)) {
           return
         }
@@ -13,7 +12,12 @@ module.exports = function () {
           global.defaultExport = name || id.name
           return
         }
-        global.defaultExport = id ? id.name : undefined
+        if (id) {
+          global.defaultExport = id.name || undefined
+          return
+        }
+        global.defaultExport = undefined
+
       },
       ExportNamedDeclaration: function (path) {
         if (!Array.isArray(global.namedExport)) {
@@ -23,7 +27,7 @@ module.exports = function () {
         if (!ableToExport(node)) {
           return
         }
-        const { declaration, specifiers } = node
+        const { declaration, specifiers, source } = node
         
         if (declaration) {
           const { type, id } = declaration
@@ -44,6 +48,7 @@ module.exports = function () {
             return
           }
           const { exported, local } = specifier
+
           let localName = local.name
           let exportedName = exported.name
           if (exportedName === 'default') {
@@ -53,10 +58,14 @@ module.exports = function () {
             }
             global.defaultExport.push(exportedName)
           } if (localName === 'default') {
-            if (!Array.isArray(global.defaultExport)) {
-              global.defaultExport = []
+            if (source) {
+              global.namedExport.push(exportedName)
+            } else {
+              if (!Array.isArray(global.defaultExport)) {
+                global.defaultExport = []
+              }
+              global.defaultExport.push(exportedName)
             }
-            global.defaultExport.push(exportedName)
           } else {
             global.namedExport.push(exportedName)
           }
@@ -690,4 +699,436 @@ function ableToExport(node) {
 //     crawling: false
 //   },
 //   type: 'ImportDeclaration'
+// }
+
+// NodePath {
+//   parent: Node {
+//     type: 'Program',
+//     start: 0,
+//     end: 748,
+//     loc: SourceLocation { start: [Position], end: [Position] },
+//     sourceType: 'module',
+//     interpreter: null,
+//     body: [
+//       [Node], [Node],
+//       [Node], [Node],
+//       [Node], [Node],
+//       [Node], [Node],
+//       [Node], [Node]
+//     ],
+//     directives: [],
+//     leadingComments: undefined,
+//     innerComments: undefined,
+//     trailingComments: undefined
+//   },
+//   hub: {
+//     file: File {
+//       _map: [Map],
+//       declarations: {},
+//       path: [NodePath],
+//       ast: [Node],
+//       metadata: {},
+//       code: "export { default as FengmapBase } from './FengmapBase'\n" +
+//         "export { default as FengmapFloors } from './FengmapFloors'\n" +
+//         '\n' +
+//         "export { default as FengmapZoomControl } from './controls/FengmapZoomControl'\n" +
+//         "export { default as FengmapRotateControl } from './controls/FengmapRotateControl'\n" +
+//         "export { default as FengmapFloorControl } from './controls/FengmapFloorControl'\n" +
+//         "export { default as Fengmap3DControl } from './controls/Fengmap3DControl'\n" +
+//         "export { default as FengmapCompassControl } from './controls/FengmapCompassControl'\n" +
+//         "export { default as FengmapResetControl } from './controls/FengmapResetControl'\n" +
+//         '\n' +
+//         "export { default as FengmapImageMarker } from './overlays/FengmapImageMarker'\n" +
+//         "export { default as FengmapNavigation } from './overlays/FengmapNavigation'\n",
+//       inputMap: null,
+//       hub: [Circular],
+//       opts: [Object],
+//       scope: [Scope]
+//     },
+//     getCode: [Function: getCode],
+//     getScope: [Function: getScope],
+//     addHelper: [Function: bound addHelper],
+//     buildError: [Function: bound buildCodeFrameError]
+//   },
+//   contexts: [
+//     TraversalContext {
+//       queue: [Array],
+//       parentPath: [NodePath],
+//       scope: [Scope],
+//       state: undefined,
+//       opts: [Object],
+//       priorityQueue: []
+//     }
+//   ],
+//   data: null,
+//   _traverseFlags: 0,
+//   state: undefined,
+//   opts: {
+//     ExportDefaultDeclaration: { enter: [Array] },
+//     ExportNamedDeclaration: { enter: [Array] },
+//     ImportDeclaration: { enter: [Array] },
+//     _exploded: {},
+//     _verified: {},
+//     JSXNamespacedName: { enter: [Array] },
+//     JSXSpreadChild: { enter: [Array] },
+//     JSXElement: { exit: [Array] },
+//     JSXFragment: { exit: [Array] },
+//     Program: { enter: [Array], exit: [Array] },
+//     JSXAttribute: { enter: [Array] },
+//     PrivateName: { enter: [Array] },
+//     ClassExpression: { enter: [Array] },
+//     ClassDeclaration: { enter: [Array] },
+//     OptionalCallExpression: { enter: [Array] },
+//     OptionalMemberExpression: { enter: [Array] },
+//     BlockStatement: { exit: [Array] },
+//     TSModuleBlock: { exit: [Array] }
+//   },
+//   skipKeys: null,
+//   parentPath: NodePath {
+//     parent: Node {
+//       type: 'File',
+//       start: 0,
+//       end: 748,
+//       loc: [SourceLocation],
+//       errors: [],
+//       program: [Node],
+//       comments: [],
+//       leadingComments: undefined,
+//       innerComments: undefined,
+//       trailingComments: undefined
+//     },
+//     hub: {
+//       file: [File],
+//       getCode: [Function: getCode],
+//       getScope: [Function: getScope],
+//       addHelper: [Function: bound addHelper],
+//       buildError: [Function: bound buildCodeFrameError]
+//     },
+//     contexts: [ [TraversalContext] ],
+//     data: null,
+//     _traverseFlags: 0,
+//     state: undefined,
+//     opts: {
+//       ExportDefaultDeclaration: [Object],
+//       ExportNamedDeclaration: [Object],
+//       ImportDeclaration: [Object],
+//       _exploded: {},
+//       _verified: {},
+//       JSXNamespacedName: [Object],
+//       JSXSpreadChild: [Object],
+//       JSXElement: [Object],
+//       JSXFragment: [Object],
+//       Program: [Object],
+//       JSXAttribute: [Object],
+//       PrivateName: [Object],
+//       ClassExpression: [Object],
+//       ClassDeclaration: [Object],
+//       OptionalCallExpression: [Object],
+//       OptionalMemberExpression: [Object],
+//       BlockStatement: [Object],
+//       TSModuleBlock: [Object]
+//     },
+//     skipKeys: null,
+//     parentPath: null,
+//     context: TraversalContext {
+//       queue: [Array],
+//       parentPath: undefined,
+//       scope: [Scope],
+//       state: undefined,
+//       opts: [Object],
+//       priorityQueue: []
+//     },
+//     container: Node {
+//       type: 'File',
+//       start: 0,
+//       end: 748,
+//       loc: [SourceLocation],
+//       errors: [],
+//       program: [Node],
+//       comments: [],
+//       leadingComments: undefined,
+//       innerComments: undefined,
+//       trailingComments: undefined
+//     },
+//     listKey: undefined,
+//     key: 'program',
+//     node: Node {
+//       type: 'Program',
+//       start: 0,
+//       end: 748,
+//       loc: [SourceLocation],
+//       sourceType: 'module',
+//       interpreter: null,
+//       body: [Array],
+//       directives: [],
+//       leadingComments: undefined,
+//       innerComments: undefined,
+//       trailingComments: undefined
+//     },
+//     scope: Scope {
+//       uid: 0,
+//       block: [Node],
+//       path: [Circular],
+//       labels: Map {},
+//       inited: true,
+//       references: [Object: null prototype] {},
+//       bindings: [Object: null prototype] {},
+//       globals: [Object: null prototype],
+//       uids: [Object: null prototype] {},
+//       data: [Object: null prototype] {},
+//       crawling: false
+//     },
+//     type: 'Program'
+//   },
+//   context: TraversalContext {
+//     queue: [
+//       [NodePath], [NodePath],
+//       [NodePath], [NodePath],
+//       [NodePath], [NodePath],
+//       [NodePath], [NodePath],
+//       [NodePath], [Circular]
+//     ],
+//     parentPath: NodePath {
+//       parent: [Node],
+//       hub: [Object],
+//       contexts: [Array],
+//       data: null,
+//       _traverseFlags: 0,
+//       state: undefined,
+//       opts: [Object],
+//       skipKeys: null,
+//       parentPath: null,
+//       context: [TraversalContext],
+//       container: [Node],
+//       listKey: undefined,
+//       key: 'program',
+//       node: [Node],
+//       scope: [Scope],
+//       type: 'Program'
+//     },
+//     scope: Scope {
+//       uid: 0,
+//       block: [Node],
+//       path: [NodePath],
+//       labels: Map {},
+//       inited: true,
+//       references: [Object: null prototype] {},
+//       bindings: [Object: null prototype] {},
+//       globals: [Object: null prototype],
+//       uids: [Object: null prototype] {},
+//       data: [Object: null prototype] {},
+//       crawling: false
+//     },
+//     state: undefined,
+//     opts: {
+//       ExportDefaultDeclaration: [Object],
+//       ExportNamedDeclaration: [Object],
+//       ImportDeclaration: [Object],
+//       _exploded: {},
+//       _verified: {},
+//       JSXNamespacedName: [Object],
+//       JSXSpreadChild: [Object],
+//       JSXElement: [Object],
+//       JSXFragment: [Object],
+//       Program: [Object],
+//       JSXAttribute: [Object],
+//       PrivateName: [Object],
+//       ClassExpression: [Object],
+//       ClassDeclaration: [Object],
+//       OptionalCallExpression: [Object],
+//       OptionalMemberExpression: [Object],
+//       BlockStatement: [Object],
+//       TSModuleBlock: [Object]
+//     },
+//     priorityQueue: []
+//   },
+//   container: [
+//     Node {
+//       type: 'ExportNamedDeclaration',
+//       start: 0,
+//       end: 54,
+//       loc: [SourceLocation],
+//       specifiers: [Array],
+//       source: [Node],
+//       declaration: null,
+//       leadingComments: undefined,
+//       innerComments: undefined,
+//       trailingComments: undefined
+//     },
+//     Node {
+//       type: 'ExportNamedDeclaration',
+//       start: 55,
+//       end: 113,
+//       loc: [SourceLocation],
+//       specifiers: [Array],
+//       source: [Node],
+//       declaration: null,
+//       leadingComments: undefined,
+//       innerComments: undefined,
+//       trailingComments: undefined
+//     },
+//     Node {
+//       type: 'ExportNamedDeclaration',
+//       start: 115,
+//       end: 192,
+//       loc: [SourceLocation],
+//       specifiers: [Array],
+//       source: [Node],
+//       declaration: null,
+//       leadingComments: undefined,
+//       innerComments: undefined,
+//       trailingComments: undefined
+//     },
+//     Node {
+//       type: 'ExportNamedDeclaration',
+//       start: 193,
+//       end: 274,
+//       loc: [SourceLocation],
+//       specifiers: [Array],
+//       source: [Node],
+//       declaration: null,
+//       leadingComments: undefined,
+//       innerComments: undefined,
+//       trailingComments: undefined
+//     },
+//     Node {
+//       type: 'ExportNamedDeclaration',
+//       start: 275,
+//       end: 354,
+//       loc: [SourceLocation],
+//       specifiers: [Array],
+//       source: [Node],
+//       declaration: null,
+//       leadingComments: undefined,
+//       innerComments: undefined,
+//       trailingComments: undefined
+//     },
+//     Node {
+//       type: 'ExportNamedDeclaration',
+//       start: 355,
+//       end: 428,
+//       loc: [SourceLocation],
+//       specifiers: [Array],
+//       source: [Node],
+//       declaration: null,
+//       leadingComments: undefined,
+//       innerComments: undefined,
+//       trailingComments: undefined
+//     },
+//     Node {
+//       type: 'ExportNamedDeclaration',
+//       start: 429,
+//       end: 512,
+//       loc: [SourceLocation],
+//       specifiers: [Array],
+//       source: [Node],
+//       declaration: null,
+//       leadingComments: undefined,
+//       innerComments: undefined,
+//       trailingComments: undefined
+//     },
+//     Node {
+//       type: 'ExportNamedDeclaration',
+//       start: 513,
+//       end: 592,
+//       loc: [SourceLocation],
+//       specifiers: [Array],
+//       source: [Node],
+//       declaration: null,
+//       leadingComments: undefined,
+//       innerComments: undefined,
+//       trailingComments: undefined
+//     },
+//     Node {
+//       type: 'ExportNamedDeclaration',
+//       start: 594,
+//       end: 671,
+//       loc: [SourceLocation],
+//       specifiers: [Array],
+//       source: [Node],
+//       declaration: null,
+//       leadingComments: undefined,
+//       innerComments: undefined,
+//       trailingComments: undefined
+//     },
+//     Node {
+//       type: 'ExportNamedDeclaration',
+//       start: 672,
+//       end: 747,
+//       loc: [SourceLocation],
+//       specifiers: [Array],
+//       source: [Node],
+//       declaration: null,
+//       leadingComments: undefined,
+//       innerComments: undefined,
+//       trailingComments: undefined
+//     }
+//   ],
+//   listKey: 'body',
+//   key: 9,
+//   node: Node {
+//     type: 'ExportNamedDeclaration',
+//     start: 672,
+//     end: 747,
+//     loc: SourceLocation { start: [Position], end: [Position] },
+//     specifiers: [ [Node] ],
+//     source: Node {
+//       type: 'StringLiteral',
+//       start: 717,
+//       end: 747,
+//       loc: [SourceLocation],
+//       extra: [Object],
+//       value: './overlays/FengmapNavigation',
+//       leadingComments: undefined,
+//       innerComments: undefined,
+//       trailingComments: undefined
+//     },
+//     declaration: null,
+//     leadingComments: undefined,
+//     innerComments: undefined,
+//     trailingComments: undefined
+//   },
+//   scope: Scope {
+//     uid: 0,
+//     block: Node {
+//       type: 'Program',
+//       start: 0,
+//       end: 748,
+//       loc: [SourceLocation],
+//       sourceType: 'module',
+//       interpreter: null,
+//       body: [Array],
+//       directives: [],
+//       leadingComments: undefined,
+//       innerComments: undefined,
+//       trailingComments: undefined
+//     },
+//     path: NodePath {
+//       parent: [Node],
+//       hub: [Object],
+//       contexts: [Array],
+//       data: null,
+//       _traverseFlags: 0,
+//       state: undefined,
+//       opts: [Object],
+//       skipKeys: null,
+//       parentPath: null,
+//       context: [TraversalContext],
+//       container: [Node],
+//       listKey: undefined,
+//       key: 'program',
+//       node: [Node],
+//       scope: [Circular],
+//       type: 'Program'
+//     },
+//     labels: Map {},
+//     inited: true,
+//     references: [Object: null prototype] {},
+//     bindings: [Object: null prototype] {},
+//     globals: [Object: null prototype] { default: [Node] },
+//     uids: [Object: null prototype] {},
+//     data: [Object: null prototype] {},
+//     crawling: false
+//   },
+//   type: 'ExportNamedDeclaration'
 // }
