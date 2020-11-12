@@ -37,8 +37,6 @@ function parseFiles(basePath, dirName, outputPath) {
   const imports = importStatements.join('\n')
   const exports = generateExports(exportStatements)
   fs.writeFileSync(path.resolve(basePath, outputName), imports + '\n\n' + exports)
-  const importList = Object.values(global.imports || {})
-  fs.writeFileSync('./exports.json', JSON.stringify(importList, null, 2))
 }
 
 parseFiles(dirPath, dirPath, outputName)
