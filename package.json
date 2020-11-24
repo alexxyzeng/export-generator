@@ -30,6 +30,7 @@
     "@babel/plugin-proposal-class-properties": "^7.10.1",
     "@babel/plugin-proposal-optional-chaining": "^7.10.1",
     "@babel/plugin-transform-react-jsx": "^7.10.1",
+    "@babel/plugin-transform-typescript": "^7.12.1",
     "chalk": "^4.1.0"
   }
 }
