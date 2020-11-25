@@ -68,7 +68,7 @@ function generateExport(targetPath, basePath) {
   babel.transform(file, {
     plugins: plugins,
   });
-  const finalPath = targetPath.replace(basePath, '.');
+  const finalPath = targetPath.replace(basePath, '.').replace(isJSOrTSRegex, '');
   if (finalPath !== '.') {
     generateDefaultExport(
       finalPath,
