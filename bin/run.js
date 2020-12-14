@@ -10,7 +10,7 @@ let exportStatements = [];
 
 const [
   dirPath = process.cwd(),
-  outputName = 'index.js',
+  name = 'index.js',
   isTS = false,
 ] = process.argv.slice(2);
 if (!dirPath) {
@@ -19,9 +19,28 @@ if (!dirPath) {
 
 const isJSOrTSRegex = /.(js|ts)x?$/;
 
-function parseFiles(basePath, dirName, outputPath) {
-  const paths = fs.readdirSync(dirName);
-
+const configName = 'exportConfig.json';
+/**
+ * 
+ * @param {string} basePath 要生成导出文件的路径
+ * @param {string} dirName 要生成导出的文件所在的文件夹路径
+ * @param {string} outputName 生成的导出文件名
+ */
+function parseFiles(basePath, dirName, outputName) {
+  const currentPath = path.resolve(basePath)
+  const paths = fs.readdirSync(currentPath);
+  let exportConfigJSON = null
+  const configPath = path.resolve(dirName, configName)
+  if (fs.existsSync(configPath)) {
+    let configStr = fs.readFileSync(configPath, 'utf-8')
+    try {
+      exportConfigJSON = JSON.parse(configStr || '{}')
+    } catch (err) {
+      console.log('====================================');
+      console.log(err, '--- parse config err');
+      console.log('====================================');
+    }
+  }
   paths.forEach((p) => {
     const targetPath = path.resolve(dirName, p);
 
@@ -30,29 +49,45 @@ function parseFiles(basePath, dirName, outputPath) {
       // parseFiles(basePath, targetPath)
       const targetFile = path.resolve(targetPath, outputName);
       if (fs.existsSync(targetFile)) {
-        generateExport(targetFile, basePath);
+        generateExport(targetFile, currentPath, exportConfigJSON);
       }
     } else if (stat.isFile()) {
-      if (p === outputPath) {
+      if (p === outputName || p === configName) {
         return;
       }
-      generateExport(targetPath, basePath);
+      generateExport(targetPath, currentPath, exportConfigJSON);
     }
   });
 
   const imports = importStatements.join('\n');
-  const exports = generateExports(exportStatements);
+  const exports = generateStatements(exportStatements);
   fs.writeFileSync(
-    path.resolve(basePath, outputName),
+    path.resolve(basePath, name),
     imports + '\n\n' + exports
   );
 }
 
-parseFiles(dirPath, dirPath, outputName);
+parseFiles(dirPath, dirPath, name);
 
-function generateExport(targetPath, basePath) {
+function generateExport(targetPath, basePath, config) {
+  // console.log('====================================')
+  // console.log(targetPath, '---- target path')
+  // console.log(basePath, '---- base path')
+  // console.log('====================================')
   if (!targetPath.match(isJSOrTSRegex)) {
     return;
+  }
+  if (config) {
+    const { include, exclude } = config
+    const isExcluded = Array.isArray(exclude) && exclude.length > 0 && exclude.some(excludeItem => excludeItem !== '' && targetPath.includes(excludeItem))
+    if (isExcluded) {
+      return
+    }
+    const isIncluded = !Array.isArray(include) || include.length === 0 || include.some(includeItem => includeItem !== '' && targetPath.includes(includeItem))
+    if (!isIncluded) {
+
+      return
+    }
   }
   global.defaultExport = null;
   const file = fs.readFileSync(targetPath, 'utf-8').toString();
@@ -121,7 +156,7 @@ function generateNamedExport(finalPath, importStatements, exportStatements) {
   });
 }
 
-function generateExports(exportStatements) {
+function generateStatements(exportStatements) {
   if (!Array.isArray(exportStatements) || exportStatements.length === 0) {
     return '';
   }
