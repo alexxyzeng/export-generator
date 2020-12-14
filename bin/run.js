@@ -11,12 +11,12 @@ let exportStatements = [];
 const [
   dirPath = process.cwd(),
   name = 'index.js',
-  isTS = false,
+  useTS = false,
 ] = process.argv.slice(2);
 if (!dirPath) {
   throw new Error(chalk.red('No directory path specified'));
 }
-
+const isTS = useTS === true || useTS === 'true'
 const isJSOrTSRegex = /.(js|ts)x?$/;
 
 const configName = 'exportConfig.json';
@@ -97,7 +97,7 @@ function generateExport(targetPath, basePath, config) {
     '@babel/plugin-proposal-class-properties',
     '@babel/plugin-proposal-optional-chaining',
   ];
-  if (isTS) {
+  if (isTS && targetPath.match(/.tsx?$/)) {
     plugins.push('@babel/plugin-transform-typescript');
   }
   babel.transform(file, {
